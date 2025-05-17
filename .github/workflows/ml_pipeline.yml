@@ -1,0 +1,35 @@
+name: ML Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirement.txt
+
+    - name: Run unit tests
+      run: |
+        pytest test_preprocess.py
+        pytest test_model.py
+
+    - name: Train ML Model
+      run: |
+        python train.py
+
+    - name: Upload Model Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-model
+        path: model.pkl
